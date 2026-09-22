@@ -5,7 +5,8 @@
 
     <application
         android:theme="@style/AppTheme"
-        android:label="Learn English Through Tamil"
+        android:label="Learn English"
+        android:icon="@drawable/app_icon"
         android:resizeableActivity="true">
 
         <activity
