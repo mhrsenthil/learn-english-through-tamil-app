@@ -21,6 +21,9 @@ public class MainActivity extends Activity {
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
 
+        // Allow audio/video media to play without requiring a user gesture
+        settings.setMediaPlaybackRequiresUserGesture(false);
+
         webView.setWebViewClient(new WebViewClient());
 
         webView.loadUrl(
