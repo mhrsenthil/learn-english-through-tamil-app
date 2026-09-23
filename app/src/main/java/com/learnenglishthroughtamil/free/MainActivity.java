@@ -1,6 +1,7 @@
 package com.learnenglishthroughtamil.free;
 
 import android.app.Activity;
+import android.media.AudioAttributes;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -26,17 +27,14 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Create WebView
         webView = new WebView(this);
 
         WebSettings settings = webView.getSettings();
+
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
-
-        // Allow media playback
         settings.setMediaPlaybackRequiresUserGesture(false);
 
-        // Connect JavaScript to Android Native TTS
         webView.addJavascriptInterface(
                 new AndroidTTS(),
                 "AndroidTTS"
@@ -55,16 +53,16 @@ public class MainActivity extends Activity {
             }
         });
 
-        // Initialize Android Text-to-Speech
         textToSpeech = new TextToSpeech(
                 this,
                 status -> {
 
                     if (status == TextToSpeech.SUCCESS) {
 
-                        int result = textToSpeech.setLanguage(
-                                new Locale("en", "IN")
-                        );
+                        int result =
+                                textToSpeech.setLanguage(
+                                        Locale.forLanguageTag("en-IN")
+                                );
 
                         if (result == TextToSpeech.LANG_MISSING_DATA
                                 || result == TextToSpeech.LANG_NOT_SUPPORTED) {
@@ -77,10 +75,22 @@ public class MainActivity extends Activity {
                         textToSpeech.setSpeechRate(0.88f);
                         textToSpeech.setPitch(1.0f);
 
+                        if (android.os.Build.VERSION.SDK_INT >= 21) {
+
+                            textToSpeech.setAudioAttributes(
+                                    new AudioAttributes.Builder()
+                                            .setUsage(
+                                                    AudioAttributes.USAGE_ASSISTANCE_ACCESSIBILITY
+                                            )
+                                            .setContentType(
+                                                    AudioAttributes.CONTENT_TYPE_SPEECH
+                                            )
+                                            .build()
+                            );
+                        }
+
                         ttsReady = true;
 
-                        // Speak text if user pressed Listen
-                        // before TTS finished initializing
                         if (pendingText != null) {
 
                             String text = pendingText;
@@ -99,10 +109,6 @@ public class MainActivity extends Activity {
         setContentView(webView);
     }
 
-    /**
-     * Replace WebView speechSynthesis.speak()
-     * with Android native Text-to-Speech.
-     */
     private void installNativeTTSBridge() {
 
         String javascript =
@@ -110,44 +116,46 @@ public class MainActivity extends Activity {
 
                 "if (!window.AndroidTTS) return;" +
 
-                "if (!window.speechSynthesis) return;" +
-
-                "if (window.speechSynthesis.__nativeAndroidTTS) return;" +
-
-                "window.speechSynthesis.__nativeAndroidTTS = true;" +
-
-                "window.__androidCurrentUtterance = null;" +
-
-                "window.__androidTtsFinished = function() {" +
-
-                "  var u = window.__androidCurrentUtterance;" +
-
-                "  window.__androidCurrentUtterance = null;" +
-
-                "  if (u && typeof u.onend === 'function') {" +
-                "      u.onend();" +
-                "  }" +
-
+                /* Stop browser speech */
+                "window.lett2StopAudio = function() {" +
+                "    AndroidTTS.stop();" +
                 "};" +
 
-                "window.speechSynthesis.speak = function(u) {" +
+                /* Direct Android TTS for Listen button */
+                "window.lett2ListenQuestion = function() {" +
 
-                "  window.__androidCurrentUtterance = u;" +
+                "    try {" +
 
-                "  AndroidTTS.speak(u.text || '');" +
+                "        var q = window.lett2Questions" +
+                "            ? window.lett2Questions[window.lett2Current]" +
+                "            : null;" +
 
-                "};" +
+                "        if (!q) {" +
+                "            AndroidTTS.speak('Please start the quiz first.');" +
+                "            return;" +
+                "        }" +
 
-                "window.speechSynthesis.cancel = function() {" +
+                "        var text = q.audioText || q.question || '';" +
 
-                "  AndroidTTS.stop();" +
+                "        var button = document.getElementById('lett2Listen');" +
 
-                "  var u = window.__androidCurrentUtterance;" +
-                "  window.__androidCurrentUtterance = null;" +
+                "        if (button) {" +
+                "            button.disabled = true;" +
+                "            button.innerHTML = '🔊 Listening...';" +
+                "        }" +
 
-                "  if (u && typeof u.onend === 'function') {" +
-                "      u.onend();" +
-                "  }" +
+                "        AndroidTTS.speak(text);" +
+
+                "        setTimeout(function() {" +
+                "            if (button) {" +
+                "                button.disabled = false;" +
+                "                button.innerHTML = '🔊 Listen';" +
+                "            }" +
+                "        }, 5000);" +
+
+                "    } catch(e) {" +
+                "        AndroidTTS.speak('Audio error.');" +
+                "    }" +
 
                 "};" +
 
@@ -159,9 +167,6 @@ public class MainActivity extends Activity {
         );
     }
 
-    /**
-     * Native Android Text-to-Speech
-     */
     private void speakNative(String text) {
 
         if (text == null || text.trim().isEmpty()) {
@@ -175,6 +180,8 @@ public class MainActivity extends Activity {
                 pendingText = text;
                 return;
             }
+
+            textToSpeech.stop();
 
             textToSpeech.speak(
                     text,
@@ -195,9 +202,6 @@ public class MainActivity extends Activity {
         });
     }
 
-    /**
-     * JavaScript -> Android bridge
-     */
     public class AndroidTTS {
 
         @JavascriptInterface
@@ -215,6 +219,7 @@ public class MainActivity extends Activity {
     protected void onDestroy() {
 
         if (textToSpeech != null) {
+
             textToSpeech.stop();
             textToSpeech.shutdown();
         }
