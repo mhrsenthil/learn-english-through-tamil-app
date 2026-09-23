@@ -65,7 +65,7 @@ public class MainActivity extends Activity {
 
         new Handler().postDelayed(() -> {
             try {
-                checkInternetAndOpen();
+                showWebView();
             } catch (Throwable e) {
                 showErrorScreen("App error: " + e.getClass().getSimpleName());
             }
