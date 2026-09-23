@@ -71,7 +71,7 @@ public class MainActivity extends Activity {
         // App title
         TextView title = new TextView(this);
 
-        title.setText("Learn English Through Tamil");
+        title.setText("TEST NEW APP 123");
         title.setTextSize(24);
         title.setGravity(Gravity.CENTER);
 
