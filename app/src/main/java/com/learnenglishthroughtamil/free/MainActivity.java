@@ -1,11 +1,16 @@
 package com.learnenglishthroughtamil.free;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.media.AudioAttributes;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.speech.tts.TextToSpeech;
+import android.view.Gravity;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -26,6 +31,54 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        showSplashScreen();
+
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            showWebView();
+        }, 2500);
+    }
+
+    private void showSplashScreen() {
+
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setGravity(Gravity.CENTER);
+        layout.setBackgroundColor(Color.WHITE);
+
+        ImageView logo = new ImageView(this);
+        logo.setImageResource(com.learnenglishthroughtamil.free.R.drawable.app_icon);
+        logo.setAdjustViewBounds(true);
+
+        LinearLayout.LayoutParams logoParams =
+                new LinearLayout.LayoutParams(
+                        220,
+                        220
+                );
+
+        layout.addView(logo, logoParams);
+
+        TextView title = new TextView(this);
+        title.setText("Learn English Through Tamil");
+        title.setTextSize(22);
+        title.setTextColor(Color.rgb(25, 118, 210));
+        title.setGravity(Gravity.CENTER);
+        title.setPadding(10, 20, 10, 10);
+
+        layout.addView(title);
+
+        TextView subtitle = new TextView(this);
+        subtitle.setText("Learn English Easily");
+        subtitle.setTextSize(16);
+        subtitle.setTextColor(Color.DKGRAY);
+        subtitle.setGravity(Gravity.CENTER);
+
+        layout.addView(subtitle);
+
+        setContentView(layout);
+    }
+
+    private void showWebView() {
 
         webView = new WebView(this);
 
@@ -67,9 +120,7 @@ public class MainActivity extends Activity {
                         if (result == TextToSpeech.LANG_MISSING_DATA
                                 || result == TextToSpeech.LANG_NOT_SUPPORTED) {
 
-                            textToSpeech.setLanguage(
-                                    Locale.US
-                            );
+                            textToSpeech.setLanguage(Locale.US);
                         }
 
                         textToSpeech.setSpeechRate(0.88f);
@@ -116,48 +167,40 @@ public class MainActivity extends Activity {
 
                 "if (!window.AndroidTTS) return;" +
 
-                /* Stop browser speech */
                 "window.lett2StopAudio = function() {" +
                 "    AndroidTTS.stop();" +
                 "};" +
 
-                /* Direct Android TTS for Listen button */
-                "window.lett2ListenQuestion = function() {" +
+                "var button = document.getElementById('lett2Listen');" +
 
-                "    try {" +
+                "if (button) {" +
 
-                "        var q = window.lett2Questions" +
-                "            ? window.lett2Questions[window.lett2Current]" +
-                "            : null;" +
+                "    button.onclick = function() {" +
 
-                "        if (!q) {" +
+                "        var question = document.getElementById('lett2Question');" +
+
+                "        var text = question ? question.innerText : '';" +
+
+                "        text = text.replace(/_+/g, ' dash ');" +
+
+                "        if (!text.trim()) {" +
                 "            AndroidTTS.speak('Please start the quiz first.');" +
                 "            return;" +
                 "        }" +
 
-                "        var text = q.audioText || q.question || '';" +
-
-                "        var button = document.getElementById('lett2Listen');" +
-
-                "        if (button) {" +
-                "            button.disabled = true;" +
-                "            button.innerHTML = '🔊 Listening...';" +
-                "        }" +
+                "        button.disabled = true;" +
+                "        button.innerHTML = '🔊 Listening...';" +
 
                 "        AndroidTTS.speak(text);" +
 
                 "        setTimeout(function() {" +
-                "            if (button) {" +
-                "                button.disabled = false;" +
-                "                button.innerHTML = '🔊 Listen';" +
-                "            }" +
+                "            button.disabled = false;" +
+                "            button.innerHTML = '🔊 Listen';" +
                 "        }, 5000);" +
 
-                "    } catch(e) {" +
-                "        AndroidTTS.speak('Audio error.');" +
-                "    }" +
+                "    };" +
 
-                "};" +
+                "}" +
 
                 "})();";
 
@@ -219,7 +262,6 @@ public class MainActivity extends Activity {
     protected void onDestroy() {
 
         if (textToSpeech != null) {
-
             textToSpeech.stop();
             textToSpeech.shutdown();
         }
