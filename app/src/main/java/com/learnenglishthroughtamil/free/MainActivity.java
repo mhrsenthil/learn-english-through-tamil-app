@@ -81,10 +81,12 @@ public class MainActivity extends Activity {
 
         // Splash duration
         new Handler().postDelayed(() -> {
-
-            checkInternetAndOpen();
-
-        }, 1500);
+    try {
+        checkInternetAndOpen();
+    } catch (Throwable e) {
+        showErrorScreen("App error: " + e.getClass().getSimpleName());
+    }
+}, 1500);
     }
 
     // =========================================================
