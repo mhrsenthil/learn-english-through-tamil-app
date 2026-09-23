@@ -32,6 +32,10 @@ jobs:
         with:
           gradle-version: '9.6.0'
 
+      - name: Verify MainActivity source
+        run: |
+          grep -n 'TEST NEW APP 123' app/src/main/java/com/learnenglishthroughtamil/free/MainActivity.java
+          
       - name: Build Release AAB
         run: gradle bundleRelease
 
