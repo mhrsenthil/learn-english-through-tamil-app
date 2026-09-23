@@ -27,15 +27,15 @@ jobs:
         run: |
           sdkmanager "platforms;android-36" "build-tools;36.0.0"
 
+      - name: Verify MainActivity source
+        run: |
+          grep -n 'Learn English Through Tamil' app/src/main/java/com/learnenglishthroughtamil/free/MainActivity.java
+
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6
         with:
           gradle-version: '9.6.0'
 
-            - name: Verify MainActivity source
-        run: |
-          grep -n 'Learn English Through Tamil' app/src/main/java/com/learnenglishthroughtamil/free/MainActivity.java          
-      
       - name: Build Release AAB
         run: gradle bundleRelease
 
