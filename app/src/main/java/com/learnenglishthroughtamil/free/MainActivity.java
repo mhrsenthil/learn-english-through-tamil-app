@@ -105,7 +105,7 @@ public class MainActivity extends Activity {
 
         TextView title = new TextView(this);
 
-        title.setText("Learn English Through Tamil");
+        title.setText("Learn English Through Tamil 43");
         title.setTextSize(22);
         title.setGravity(android.view.Gravity.CENTER);
         title.setPadding(0, 25, 0, 0);
@@ -238,18 +238,29 @@ webView.addJavascriptInterface(
             "javascript:(function(){" +
             "if(window.__nativeAudioInstalled){return;}" +
             "window.__nativeAudioInstalled=true;" +
-            "if(!window.speechSynthesis){return;}" +
 
-            "window.speechSynthesis.speak=function(utterance){" +
+            "var oldSpeak=window.speechSynthesis.speak;" +
+
+            "window.speechSynthesis.speak=function(u){" +
             "try{" +
-            "var text=encodeURIComponent(utterance.text||'');" +
-            "var lang=encodeURIComponent(utterance.lang||'en-IN');" +
-            "window.location.href='learnenglishtts://speak?lang='+lang+'&text='+text;" +
-            "}catch(e){}" +
-            "};" +
+            "var text=u.text||'';" +
+            "var lang=(u.lang||'en-IN').toLowerCase();" +
 
-            "window.speechSynthesis.cancel=function(){" +
-            "window.location.href='learnenglishtts://stop';" +
+            "if(window.AndroidTTS){" +
+
+            "if(lang.indexOf('ta')===0){" +
+            "window.AndroidTTS.speakTamil(text);" +
+            "}else{" +
+            "window.AndroidTTS.speakEnglish(text);" +
+            "}" +
+
+            "}else{" +
+            "oldSpeak.call(window.speechSynthesis,u);" +
+            "}" +
+
+            "}catch(e){" +
+            "try{oldSpeak.call(window.speechSynthesis,u);}catch(x){}" +
+            "}" +
             "};" +
 
             "})();";
