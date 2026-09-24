@@ -138,10 +138,10 @@ public class MainActivity extends Activity {
         settings.setLoadsImagesAutomatically(true);
 
         // Native Android TTS bridge
-        // webView.addJavascriptInterface(
-//     new AndroidTTS(),
-//     "AndroidTTS"
-// );
+webView.addJavascriptInterface(
+        new AndroidTTS(),
+        "AndroidTTS"
+);
 
         webView.setWebViewClient(new WebViewClient() {
 
