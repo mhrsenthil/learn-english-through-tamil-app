@@ -120,6 +120,45 @@ public class MainActivity extends Activity {
 
         webView.setWebViewClient(new WebViewClient() {
 
+        @Override
+        public boolean shouldOverrideUrlLoading(
+        WebView view,
+        WebResourceRequest request) {
+
+        String url = request.getUrl().toString();
+
+        if (url.startsWith("learnenglishtts://speak")) {
+
+        android.net.Uri uri = android.net.Uri.parse(url);
+
+        String text = uri.getQueryParameter("text");
+        String lang = uri.getQueryParameter("lang");
+
+        if (text != null) {
+            if (lang != null &&
+                    lang.toLowerCase().startsWith("ta")) {
+
+                new AndroidTTS().speakTamil(text);
+
+            } else {
+
+                new AndroidTTS().speakEnglish(text);
+            }
+        }
+
+        return true;
+    }
+
+    if (url.startsWith("learnenglishtts://stop")) {
+
+        new AndroidTTS().stop();
+
+        return true;
+    }
+
+    return false;
+}
+            
             @Override
             public void onPageFinished(
                     WebView view,
