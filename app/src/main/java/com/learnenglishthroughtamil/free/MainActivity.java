@@ -165,50 +165,8 @@ public class MainActivity extends Activity {
     // ---------------------------------------------------------
 
     private void installAudioBridge() {
-
-        if (webView == null) {
-            return;
-        }
-
-        String script =
-                "javascript:(function(){" +
-
-                "if(window.__nativeAudioInstalled){return;}" +
-
-                "window.__nativeAudioInstalled=true;" +
-
-                "if(!window.speechSynthesis){return;}" +
-
-                "var originalSpeak=window.speechSynthesis.speak;" +
-
-                "window.speechSynthesis.speak=function(utterance){" +
-
-                "try{" +
-
-                "var text=utterance.text||'';" +
-                "var lang=utterance.lang||'';" +
-
-                "if(lang.toLowerCase().indexOf('ta')===0){" +
-                "window.AndroidTTS.speakTamil(text);" +
-                "}else{" +
-                "window.AndroidTTS.speakEnglish(text);" +
-                "}" +
-
-                "}catch(e){" +
-                "try{originalSpeak.call(window.speechSynthesis,utterance);}catch(x){}" +
-                "}" +
-
-                "};" +
-
-                "window.speechSynthesis.cancel=function(){" +
-                "try{window.AndroidTTS.stop();}catch(e){}" +
-                "};" +
-
-                "})();";
-
-        webView.evaluateJavascript(script, null);
-    }
-
+    // Let the Blogger page use WebView's built-in speechSynthesis.
+}
     // ---------------------------------------------------------
     // NATIVE TTS BRIDGE
     // ---------------------------------------------------------
