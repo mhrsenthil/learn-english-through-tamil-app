@@ -33,11 +33,36 @@ public class MainActivity extends Activity {
         showSplash();
 
         textToSpeech = new TextToSpeech(this, status -> {
-            if (status == TextToSpeech.SUCCESS) {
-                textToSpeech.setLanguage(Locale.ENGLISH);
-            }
-        });
+    if (status == TextToSpeech.SUCCESS) {
 
+        textToSpeech.setLanguage(new Locale("en", "IN"));
+        textToSpeech.setSpeechRate(0.88f);
+
+        // Warm up English TTS engine
+        textToSpeech.speak(
+                "",
+                TextToSpeech.QUEUE_FLUSH,
+                null,
+                "warmup_en"
+        );
+
+        // Prepare Tamil voice too
+        textToSpeech.setLanguage(new Locale("ta", "IN"));
+        textToSpeech.setSpeechRate(0.85f);
+
+        // Warm up Tamil TTS engine
+        textToSpeech.speak(
+                "",
+                TextToSpeech.QUEUE_FLUSH,
+                null,
+                "warmup_ta"
+        );
+
+        // Return to English as default
+        textToSpeech.setLanguage(new Locale("en", "IN"));
+        textToSpeech.setSpeechRate(0.88f);
+    }
+});
         // No network permission check.
         // No ConnectivityManager.
         // Open WebView directly after splash.
