@@ -24,7 +24,7 @@ public class MainActivity extends Activity {
     private TextToSpeech textToSpeech;
 
     private static final String WEBSITE_URL =
-            "https://learnenglishthroughtamilfree.blogspot.com/2026/09/basic-spoken-english-day-1-20.html";
+            "https://learnenglishthroughtamilfree.blogspot.com/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
