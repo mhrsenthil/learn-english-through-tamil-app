@@ -311,7 +311,7 @@ webView.addJavascriptInterface(
         @JavascriptInterface
         public void speakEnglish(String text) {
 
-            Toast.makeText(this, "TTS BRIDGE WORKING", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "TTS BRIDGE WORKING", Toast.LENGTH_SHORT).show();
             if (text == null || text.trim().isEmpty()) {
                 return;
             }
