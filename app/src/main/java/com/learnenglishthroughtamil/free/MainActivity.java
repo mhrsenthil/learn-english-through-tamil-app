@@ -106,7 +106,7 @@ public class MainActivity extends Activity {
 
         TextView title = new TextView(this);
 
-        title.setText("Learn English Through Tamil 50");
+        title.setText("Learn English Through Tamil 51");
         title.setTextSize(22);
         title.setGravity(android.view.Gravity.CENTER);
         title.setPadding(0, 25, 0, 0);
@@ -243,6 +243,7 @@ webView.addJavascriptInterface(
             "var oldSpeak=window.speechSynthesis.speak;" +
 
             "window.speechSynthesis.speak=function(u){" +
+            "alert('SPEAK CALLED: ' + (u.text||''));" +
             "try{" +
             "var text=u.text||'';" +
             "var lang=(u.lang||'en-IN').toLowerCase();" +
