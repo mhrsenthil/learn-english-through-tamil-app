@@ -106,7 +106,7 @@ public class MainActivity extends Activity {
 
         TextView title = new TextView(this);
 
-        title.setText("Learn English Through Tamil 48");
+        title.setText("Learn English Through Tamil 50");
         title.setTextSize(22);
         title.setGravity(android.view.Gravity.CENTER);
         title.setPadding(0, 25, 0, 0);
@@ -266,7 +266,13 @@ webView.addJavascriptInterface(
 
             "})();";
 
-    webView.evaluateJavascript(script, null);
+    webView.evaluateJavascript(script, value ->
+        Toast.makeText(
+                MainActivity.this,
+                "AUDIO BRIDGE INSTALLED",
+                Toast.LENGTH_LONG
+        ).show()
+);
 }
     // ---------------------------------------------------------
     // NATIVE TTS BRIDGE
