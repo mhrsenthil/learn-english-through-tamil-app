@@ -106,7 +106,7 @@ public class MainActivity extends Activity {
 
         TextView title = new TextView(this);
 
-        title.setText("Learn English Through Tamil 43");
+        title.setText("Learn English Through Tamil 48");
         title.setTextSize(22);
         title.setGravity(android.view.Gravity.CENTER);
         title.setPadding(0, 25, 0, 0);
