@@ -37,8 +37,14 @@ public class MainActivity extends Activity {
         showSplashScreen();
 
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            showWebView();
-        }, 2500);
+
+    if (isInternetAvailable()) {
+        showWebView();
+    } else {
+        showOfflineScreen();
+    }
+
+}, 2500);
     }
 
     private void showSplashScreen() {
@@ -80,6 +86,80 @@ public class MainActivity extends Activity {
         setContentView(layout);
     }
 
+    private boolean isInternetAvailable() {
+
+    ConnectivityManager cm =
+            (ConnectivityManager) getSystemService(
+                    Context.CONNECTIVITY_SERVICE
+            );
+
+    if (cm == null) {
+        return false;
+    }
+
+    android.net.NetworkInfo activeNetwork =
+            cm.getActiveNetworkInfo();
+
+    return activeNetwork != null &&
+            activeNetwork.isConnected();
+}
+    private void showOfflineScreen() {
+
+    LinearLayout layout = new LinearLayout(this);
+    layout.setOrientation(LinearLayout.VERTICAL);
+    layout.setGravity(Gravity.CENTER);
+    layout.setPadding(40, 30, 40, 30);
+    layout.setBackgroundColor(Color.WHITE);
+
+    TextView icon = new TextView(this);
+    icon.setText("📡");
+    icon.setTextSize(60);
+    icon.setGravity(Gravity.CENTER);
+    layout.addView(icon);
+
+    TextView title = new TextView(this);
+    title.setText("No Internet Connection");
+    title.setTextSize(24);
+    title.setTypeface(null, android.graphics.Typeface.BOLD);
+    title.setTextColor(Color.rgb(30, 30, 30));
+    title.setGravity(Gravity.CENTER);
+    title.setPadding(10, 15, 10, 10);
+    layout.addView(title);
+
+    TextView message = new TextView(this);
+    message.setText(
+            "இந்த app-ஐ பயன்படுத்த Internet connection தேவை.\n\n" +
+            "Wi-Fi அல்லது Mobile Data-ஐ ON செய்து மீண்டும் முயற்சி செய்யுங்கள்."
+    );
+    message.setTextSize(17);
+    message.setTextColor(Color.DKGRAY);
+    message.setGravity(Gravity.CENTER);
+    message.setPadding(10, 10, 10, 25);
+    layout.addView(message);
+
+    android.widget.Button retryButton =
+            new android.widget.Button(this);
+
+    retryButton.setText("🔄 Retry");
+    retryButton.setTextSize(16);
+
+    retryButton.setOnClickListener(v -> {
+
+        if (isInternetAvailable()) {
+            showWebView();
+        } else {
+            android.widget.Toast.makeText(
+                    MainActivity.this,
+                    "Internet connection இல்லை",
+                    android.widget.Toast.LENGTH_SHORT
+            ).show();
+        }
+    });
+
+    layout.addView(retryButton);
+
+    setContentView(layout);
+}
     private void showWebView() {
 
         webView = new WebView(this);
