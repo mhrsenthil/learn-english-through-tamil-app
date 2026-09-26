@@ -15,6 +15,8 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.content.Context;
+import android.net.ConnectivityManager;
 
 import java.util.Locale;
 
@@ -59,7 +61,7 @@ public class MainActivity extends Activity {
         layout.addView(logo, logoParams);
 
         TextView title = new TextView(this);
-        title.setText("Learn English Through Tamil");
+        title.setText("Learn English Through Tamil 01");
         title.setTextSize(22);
         title.setTextColor(Color.rgb(25, 118, 210));
         title.setGravity(Gravity.CENTER);
